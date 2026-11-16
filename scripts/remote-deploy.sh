@@ -40,14 +40,14 @@ docker compose -f compose.yaml -f compose.prod.yaml pull app
 docker compose -f compose.yaml -f compose.prod.yaml up -d --remove-orphans
 docker compose -f compose.yaml -f compose.prod.yaml ps
 
-app_domain=$(sed -n 's/^APP_DOMAIN=//p' .env | tail -n 1)
-test -n "$app_domain"
+app_port=$(sed -n 's/^APP_PORT=//p' .env | tail -n 1)
+app_port=${app_port:-3000}
 for ((attempt = 1; attempt <= 30; attempt++)); do
-  if curl -fsS --max-time 10 "https://$app_domain/api/health" | grep -q '"status":"ok"'; then
+  if curl -fsS --max-time 10 "http://127.0.0.1:$app_port/api/health" | grep -q '"status":"ok"'; then
     exit 0
   fi
   sleep 5
 done
 
-docker compose -f compose.yaml -f compose.prod.yaml logs --tail=100 app caddy
+docker compose -f compose.yaml -f compose.prod.yaml logs --tail=100 app
 exit 1

@@ -85,7 +85,7 @@ jobs:
             "$APP_IMAGE" "$GHCR_USERNAME" "$GHCR_READ_TOKEN" \
             > "$RUNNER_TEMP/korekto-$RUN_ID.release"
           cp scripts/remote-deploy.sh "$RUNNER_TEMP/korekto-$RUN_ID.deploy.sh"
-          tar -czf "$RUNNER_TEMP/korekto-$RUN_ID.tar.gz" compose.yaml compose.prod.yaml docker/Caddyfile
+          tar -czf "$RUNNER_TEMP/korekto-$RUN_ID.tar.gz" compose.yaml compose.prod.yaml
 
       - name: Configure Ed25519-only SSH
         env:
@@ -131,7 +131,7 @@ jobs:
             "$RUNNER_TEMP/korekto-$RUN_ID.tar.gz" \
             korekto-deploy:/tmp/
 
-      - name: Deploy release and verify HTTPS
+      - name: Deploy release and verify application health
         env:
           RUN_ID: ${{ github.run_id }}
         run: ssh -F "$RUNNER_TEMP/ssh/config" korekto-deploy "bash /tmp/korekto-$RUN_ID.deploy.sh $RUN_ID"

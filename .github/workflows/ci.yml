@@ -32,12 +32,20 @@ jobs:
       - run: npm run build
       - run: npm audit --audit-level=critical
 
-      - name: Verify production Compose isolation
+      - name: Verify production Compose networking
         env:
           APP_IMAGE: ghcr.io/plutolabsapps/korekto:test
-          APP_DOMAIN: korekto.example.com
-          ACME_EMAIL: admin@example.com
         run: |
           COMPOSE_JSON="$(docker compose -f compose.yaml -f compose.prod.yaml config --format json)"
           export COMPOSE_JSON
-          node --input-type=module -e 'const config = JSON.parse(process.env.COMPOSE_JSON); if (config.services.app.build) throw new Error("Production app has a build section"); if (config.services.app.ports?.length) throw new Error("Production app publishes a port");'
+          node --input-type=module -e '
+            const config = JSON.parse(process.env.COMPOSE_JSON);
+            const app = config.services.app;
+            if (app.build) throw new Error("Production app has a build section");
+            if (app.ports?.length !== 1 || app.ports[0].host_ip !== "127.0.0.1" || app.ports[0].target !== 3000) {
+              throw new Error("Production app must publish only container port 3000 on 127.0.0.1");
+            }
+            if (Object.keys(config.services).length !== 1) {
+              throw new Error("Production Compose must contain only the app service");
+            }
+          '

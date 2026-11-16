@@ -36,7 +36,7 @@ docker compose up --build
 
 The application is available at http://localhost:3000 and the readiness endpoint at http://localhost:3000/api/health. Stop it with `docker compose down`.
 
-The production override adds Caddy, automatic HTTPS, persistent certificate volumes, and a private application network. See [the Hetzner deployment guide](docs/deployment.md) for server setup, repository secrets, releases, logs, rollback, and secret rotation.
+The production override runs only the application container on the host's loopback interface. See [the Hetzner deployment guide](docs/deployment.md) for server setup, repository secrets, releases, logs, rollback, and secret rotation.
 
 ## Contributing
 

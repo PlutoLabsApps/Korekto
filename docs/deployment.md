@@ -1,22 +1,18 @@
 # Deploying Korekto to Hetzner
 
-The deployment uses GitHub Actions, GitHub Container Registry (GHCR), Docker Compose, and Caddy. CI must pass on `main` before the automatic deployment starts. Caddy obtains and renews the HTTPS certificate; the Nuxt container is not exposed publicly.
+The deployment uses GitHub Actions, GitHub Container Registry (GHCR), OpenSSH, and Docker Compose. It manages only the Korekto application container. Public request handling is managed outside this repository.
 
 ## Architecture
 
 - GitHub Actions runs formatting, linting, type checking, tests, a production build, and a critical-vulnerability audit.
 - The release job builds `linux/amd64` and `linux/arm64` images and pushes `ghcr.io/plutolabsapps/korekto:<full-commit-sha>` plus `latest`.
 - The server keeps its configuration in `/opt/korekto/.env` and runs `compose.yaml` with `compose.prod.yaml`.
-- Caddy listens on ports 80 and 443 and proxies requests to `app:3000` over the private Compose network.
-- The deployment checks `https://<APP_DOMAIN>/api/health` and fails if it does not return `{ "status": "ok" }`.
+- The application container listens on `127.0.0.1:3000` by default. Set `APP_PORT` to change the host port.
+- The deployment checks `http://127.0.0.1:<APP_PORT>/api/health` and fails if it does not return `{ "status": "ok" }`.
 
-## 1. Prepare DNS and the server
+## 1. Prepare the server
 
-Use a current Ubuntu LTS server on Hetzner. Create a DNS `A` record for your domain pointing to the server. Add an `AAAA` record only if IPv6 is correctly configured.
-
-Allow inbound TCP ports 22, 80, and 443, plus UDP 443 for HTTP/3, in the Hetzner firewall. Keep SSH restricted to trusted addresses where practical.
-
-Install Docker Engine and the Compose plugin by following the [official Docker Ubuntu instructions](https://docs.docker.com/engine/install/ubuntu/). Use Docker Compose 2.24.4 or newer because the production override uses `!reset` and `!override` to remove local-only settings. Also install `curl` and `tar`.
+Use a current Ubuntu LTS server on Hetzner. Install Docker Engine and the Compose plugin by following the [official Docker Ubuntu instructions](https://docs.docker.com/engine/install/ubuntu/). Use Docker Compose 2.24.4 or newer because the production override uses `!reset`. Also install `curl` and `tar`.
 
 Create a deployment user and application directory:
 
@@ -61,25 +57,22 @@ Start with `.env.example`, without committing the result:
 
 ```dotenv
 APP_IMAGE=ghcr.io/plutolabsapps/korekto:latest
-APP_DOMAIN=korekto.plutolabs.app
-ACME_EMAIL=info@plutolabs.app
+APP_PORT=3000
 
 NUXT_PUBLIC_SITE_NAME=Korekto
 NUXT_PUBLIC_SITE_URL=https://korekto.plutolabs.app
 ```
 
-Replace the domain and email. `ACME_EMAIL` receives certificate notices from Let's Encrypt. Add future application secrets to this same multiline `ENV_FILE` secret; never put real values in `.env.example` or Git.
-
-Each deployment replaces `APP_IMAGE` with the full commit SHA being released. Public Nuxt values are read at runtime, so rebuilding just to change them is unnecessary.
+Add future application secrets to this same multiline `ENV_FILE` secret; never put real values in `.env.example` or Git. Each deployment replaces `APP_IMAGE` with the full commit SHA being released. Public Nuxt values are read at runtime.
 
 ## 4. Run the first deployment
 
-Push or merge the desired commit into `main`. In **Actions**, wait for **CI** and then **Deploy** to finish. The first start can take a few minutes while Caddy requests the certificate.
+Push or merge the desired commit into `main`. In **Actions**, wait for **CI** and then **Deploy** to finish.
 
-Verify:
+Verify on the server:
 
 ```bash
-curl -fsS https://korekto.example.com/api/health
+curl -fsS http://127.0.0.1:3000/api/health
 ```
 
 Expected response:
@@ -100,10 +93,9 @@ On the server:
 cd /opt/korekto
 docker compose -f compose.yaml -f compose.prod.yaml ps
 docker compose -f compose.yaml -f compose.prod.yaml logs -f app
-docker compose -f compose.yaml -f compose.prod.yaml logs -f caddy
 ```
 
-Do not print `.env` in shared terminals or logs. Caddy certificates persist in the `korekto_caddy_data` volume.
+Do not print `.env` in shared terminals or logs.
 
 ## Rollback
 
@@ -114,21 +106,21 @@ cd /opt/korekto
 sed -i 's|^APP_IMAGE=.*$|APP_IMAGE=ghcr.io/plutolabsapps/korekto:PREVIOUS_FULL_COMMIT_SHA|' .env
 docker compose -f compose.yaml -f compose.prod.yaml pull app
 docker compose -f compose.yaml -f compose.prod.yaml up -d
-curl -fsS "https://$(sed -n 's/^APP_DOMAIN=//p' .env | tail -n 1)/api/health"
+curl -fsS "http://127.0.0.1:$(sed -n 's/^APP_PORT=//p' .env | tail -n 1)/api/health"
 ```
 
-A later `main` deployment replaces `APP_IMAGE` again. This foundation has no database migrations. When migrations are added, a release is not safely reversible until its backward-compatible database rollback procedure is also documented.
+If `APP_PORT` is omitted, use port `3000` in the verification command. A later `main` deployment replaces `APP_IMAGE` again. This foundation has no database migrations. When migrations are added, a release is not safely reversible until its backward-compatible database rollback procedure is also documented.
 
 ## Rotate secrets
 
 - **Application values:** update `ENV_FILE`; the next deployment replaces `/opt/korekto/.env` with mode `600`.
 - **GHCR pull token:** create a replacement token, update `GHCR_READ_TOKEN`, deploy, verify the pull, then revoke the old token.
-- **SSH key:** add the new public key to `deploy`'s `authorized_keys`, update `HETZNER_SSH_KEY`, run a manual deployment, then remove the old public key.
+- **SSH key:** add the new public key to `korekto`'s `authorized_keys`, update `HETZNER_SSH_KEY`, run a manual deployment, then remove the old public key.
 - **Host key changed:** verify the new fingerprint out of band before updating `HETZNER_HOST_FINGERPRINT`. Never bypass host verification to make a deployment pass.
 
 ## Troubleshooting
 
-- **Certificate errors:** confirm DNS points to this server and ports 80/443 are reachable, then inspect Caddy logs.
+- **Application port already in use:** identify the owner with `sudo ss -ltnp '( sport = :3000 )'` and `docker ps --filter publish=3000`. Stop or reconfigure only a service you have confirmed is no longer needed, or set a different `APP_PORT`.
 - **Image pull denied:** check GHCR package permissions, `GHCR_USERNAME`, and the token's `read:packages` scope.
-- **Health check timeout:** inspect both services with the commands above. The failed release remains visible in Actions with the last 100 log lines.
+- **Health check timeout:** inspect `docker compose -f compose.yaml -f compose.prod.yaml logs app`. Confirm that `APP_PORT` in `.env` matches the port used by the health check.
 - **SSH fingerprint mismatch:** investigate the host identity first; update the secret only after confirming an intentional host-key change.
