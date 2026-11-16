@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test
+      - run: npm run build
+      - run: npm audit --audit-level=critical
+
+      - name: Verify production Compose isolation
+        env:
+          APP_IMAGE: ghcr.io/plutolabsapps/korekto:test
+          APP_DOMAIN: korekto.example.com
+          ACME_EMAIL: admin@example.com
+        run: |
+          COMPOSE_JSON="$(docker compose -f compose.yaml -f compose.prod.yaml config --format json)"
+          export COMPOSE_JSON
+          node --input-type=module -e 'const config = JSON.parse(process.env.COMPOSE_JSON); if (config.services.app.build) throw new Error("Production app has a build section"); if (config.services.app.ports?.length) throw new Error("Production app publishes a port");'

@@ -1,0 +1,143 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      image: ${{ steps.release.outputs.image }}
+      sha: ${{ steps.release.outputs.sha }}
+    steps:
+      - name: Resolve release coordinates
+        id: release
+        env:
+          WORKFLOW_RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          sha="${WORKFLOW_RUN_SHA:-$GITHUB_SHA}"
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "image=$image:$sha" >> "$GITHUB_OUTPUT"
+          echo "image_name=$image" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.release.outputs.sha }}
+
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.image_name }}:${{ steps.release.outputs.sha }}
+            ${{ env.image_name }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.build.outputs.sha }}
+
+      - name: Prepare private deployment files
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          umask 077
+          printf '%s\n' "$ENV_FILE" > "$RUNNER_TEMP/korekto-$RUN_ID.env"
+          tar -czf "$RUNNER_TEMP/korekto-$RUN_ID.tar.gz" compose.yaml compose.prod.yaml docker/Caddyfile
+
+      - name: Copy environment and Compose configuration
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: ${{ secrets.HETZNER_USERNAME }}
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          port: ${{ secrets.HETZNER_SSH_PORT || 22 }}
+          fingerprint: ${{ secrets.HETZNER_HOST_FINGERPRINT }}
+          source: ${{ runner.temp }}/korekto-${{ github.run_id }}.*
+          target: /tmp/
+
+      - name: Deploy release and verify HTTPS
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          APP_IMAGE: ${{ needs.build.outputs.image }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_READ_TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: ${{ secrets.HETZNER_USERNAME }}
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          port: ${{ secrets.HETZNER_SSH_PORT || 22 }}
+          fingerprint: ${{ secrets.HETZNER_HOST_FINGERPRINT }}
+          envs: APP_IMAGE,GHCR_USERNAME,GHCR_READ_TOKEN,RUN_ID
+          script_stop: true
+          script: |
+            set -euo pipefail
+            app_dir=/opt/korekto
+            archive="/tmp/korekto-$RUN_ID.tar.gz"
+            env_file="/tmp/korekto-$RUN_ID.env"
+
+            mkdir -p "$app_dir"
+            tar -xzf "$archive" -C "$app_dir"
+            rm -f "$archive"
+            mv "$env_file" "$app_dir/.env"
+            chmod 600 "$app_dir/.env"
+            cd "$app_dir"
+
+            if grep -q '^APP_IMAGE=' .env; then
+              sed -i "s|^APP_IMAGE=.*$|APP_IMAGE=$APP_IMAGE|" .env
+            else
+              printf 'APP_IMAGE=%s\n' "$APP_IMAGE" >> .env
+            fi
+
+            printf '%s' "$GHCR_READ_TOKEN" | docker login ghcr.io --username "$GHCR_USERNAME" --password-stdin
+            docker compose -f compose.yaml -f compose.prod.yaml pull app
+            docker compose -f compose.yaml -f compose.prod.yaml up -d --remove-orphans
+            docker compose -f compose.yaml -f compose.prod.yaml ps
+
+            app_domain=$(sed -n 's/^APP_DOMAIN=//p' .env | tail -n 1)
+            test -n "$app_domain"
+            for attempt in $(seq 1 30); do
+              if curl -fsS --max-time 10 "https://$app_domain/api/health" | grep -q '"status":"ok"'; then
+                exit 0
+              fi
+              sleep 5
+            done
+
+            docker compose -f compose.yaml -f compose.prod.yaml logs --tail=100 app caddy
+            exit 1

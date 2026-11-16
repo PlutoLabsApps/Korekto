@@ -1,0 +1,10 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+:where(a:any-link, button):focus-visible {
+  outline: 3px solid #0d9488;
+  outline-offset: 3px;
+}

@@ -1,0 +1,17 @@
+node_modules/
+.nuxt/
+.output/
+.data/
+coverage/
+dist/
+.cache/
+.nitro/
+.superpowers/
+docs/superpowers/
+
+.env
+.env.*
+!.env.example
+
+*.log
+.DS_Store
