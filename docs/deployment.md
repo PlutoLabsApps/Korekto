@@ -41,17 +41,17 @@ Open **Settings → Secrets and variables → Actions → New repository secret*
 | `HETZNER_USERNAME`         | `korekto`                                                      |
 | `HETZNER_SSH_KEY`          | Private SSH key for `korekto`, including its header and footer |
 | `HETZNER_SSH_PORT`         | SSH port; optional, defaults to `22`                           |
-| `HETZNER_HOST_FINGERPRINT` | SHA256 fingerprint of the server's ED25519 host key            |
+| `HETZNER_HOST_FINGERPRINT` | SHA256 fingerprint of the server's Ed25519 host key            |
 | `GHCR_USERNAME`            | GitHub user or organization used to read GHCR                  |
 | `GHCR_READ_TOKEN`          | GitHub token with `read:packages` for the GHCR image           |
 
-Obtain the host fingerprint from a trusted network and verify it through a second channel before use:
+The workflow configures OpenSSH with `HostKeyAlgorithms=ssh-ed25519` and a pinned `known_hosts` entry. Through an already verified SSH session on the server, print the Ed25519 host public-key fingerprint:
 
 ```bash
-ssh-keyscan -t ed25519 -p 22 YOUR_SERVER_IP 2>/dev/null | ssh-keygen -lf -
+ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub | cut -d ' ' -f2
 ```
 
-Copy the `SHA256:...` value. The workflow verifies this fingerprint instead of blindly trusting the SSH host.
+Copy the complete `SHA256:...` value into `HETZNER_HOST_FINGERPRINT`. You can independently confirm the same network key with `ssh-keyscan -t ed25519 -p 22 YOUR_SERVER_IP 2>/dev/null | ssh-keygen -lf -`. The workflow rejects a mismatched fingerprint and will not negotiate ECDSA or RSA host keys.
 
 For a private GHCR package, use a classic personal access token with `read:packages`. Restrict its lifetime and rotate it regularly. GitHub's temporary workflow token publishes the image; the separate token only lets the server pull it.
 

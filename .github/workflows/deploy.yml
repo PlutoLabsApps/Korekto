@@ -72,72 +72,66 @@ jobs:
 
       - name: Prepare private deployment files
         env:
+          APP_IMAGE: ${{ needs.build.outputs.image }}
           ENV_FILE: ${{ secrets.ENV_FILE }}
+          GHCR_READ_TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
           RUN_ID: ${{ github.run_id }}
         run: |
           set -euo pipefail
           umask 077
           printf '%s\n' "$ENV_FILE" > "$RUNNER_TEMP/korekto-$RUN_ID.env"
+          printf 'APP_IMAGE=%s\nGHCR_USERNAME=%s\nGHCR_READ_TOKEN=%s\n' \
+            "$APP_IMAGE" "$GHCR_USERNAME" "$GHCR_READ_TOKEN" \
+            > "$RUNNER_TEMP/korekto-$RUN_ID.release"
+          cp scripts/remote-deploy.sh "$RUNNER_TEMP/korekto-$RUN_ID.deploy.sh"
           tar -czf "$RUNNER_TEMP/korekto-$RUN_ID.tar.gz" compose.yaml compose.prod.yaml docker/Caddyfile
 
+      - name: Configure Ed25519-only SSH
+        env:
+          HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+          HETZNER_HOST_FINGERPRINT: ${{ secrets.HETZNER_HOST_FINGERPRINT }}
+          HETZNER_PORT: ${{ secrets.HETZNER_SSH_PORT || 22 }}
+          HETZNER_SSH_KEY: ${{ secrets.HETZNER_SSH_KEY }}
+          HETZNER_USERNAME: ${{ secrets.HETZNER_USERNAME }}
+        run: |
+          set -euo pipefail
+          umask 077
+          ssh_dir="$RUNNER_TEMP/ssh"
+          mkdir -p "$ssh_dir"
+          printf '%s\n' "$HETZNER_SSH_KEY" > "$ssh_dir/deploy_key"
+
+          ssh-keyscan -t ed25519 -p "$HETZNER_PORT" "$HETZNER_HOST" > "$ssh_dir/known_hosts"
+          actual_fingerprint=$(ssh-keygen -lf "$ssh_dir/known_hosts" | cut -d ' ' -f2 | sort -u)
+          test "$actual_fingerprint" = "$HETZNER_HOST_FINGERPRINT"
+
+          cat > "$ssh_dir/config" <<EOF
+          Host korekto-deploy
+            HostName $HETZNER_HOST
+            Port $HETZNER_PORT
+            User $HETZNER_USERNAME
+            IdentityFile $ssh_dir/deploy_key
+            UserKnownHostsFile $ssh_dir/known_hosts
+            BatchMode yes
+            ConnectTimeout 30
+            HostKeyAlgorithms ssh-ed25519
+            IdentitiesOnly yes
+            PasswordAuthentication no
+            StrictHostKeyChecking yes
+          EOF
+
       - name: Copy environment and Compose configuration
-        uses: appleboy/scp-action@v1.0.0
-        with:
-          host: ${{ secrets.HETZNER_HOST }}
-          username: ${{ secrets.HETZNER_USERNAME }}
-          key: ${{ secrets.HETZNER_SSH_KEY }}
-          port: ${{ secrets.HETZNER_SSH_PORT || 22 }}
-          fingerprint: ${{ secrets.HETZNER_HOST_FINGERPRINT }}
-          source: ${{ runner.temp }}/korekto-${{ github.run_id }}.*
-          target: /tmp/
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          scp -F "$RUNNER_TEMP/ssh/config" \
+            "$RUNNER_TEMP/korekto-$RUN_ID.env" \
+            "$RUNNER_TEMP/korekto-$RUN_ID.release" \
+            "$RUNNER_TEMP/korekto-$RUN_ID.deploy.sh" \
+            "$RUNNER_TEMP/korekto-$RUN_ID.tar.gz" \
+            korekto-deploy:/tmp/
 
       - name: Deploy release and verify HTTPS
-        uses: appleboy/ssh-action@v1.2.2
         env:
-          APP_IMAGE: ${{ needs.build.outputs.image }}
-          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
-          GHCR_READ_TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
           RUN_ID: ${{ github.run_id }}
-        with:
-          host: ${{ secrets.HETZNER_HOST }}
-          username: ${{ secrets.HETZNER_USERNAME }}
-          key: ${{ secrets.HETZNER_SSH_KEY }}
-          port: ${{ secrets.HETZNER_SSH_PORT || 22 }}
-          fingerprint: ${{ secrets.HETZNER_HOST_FINGERPRINT }}
-          envs: APP_IMAGE,GHCR_USERNAME,GHCR_READ_TOKEN,RUN_ID
-          script_stop: true
-          script: |
-            set -euo pipefail
-            app_dir=/opt/korekto
-            archive="/tmp/korekto-$RUN_ID.tar.gz"
-            env_file="/tmp/korekto-$RUN_ID.env"
-
-            mkdir -p "$app_dir"
-            tar -xzf "$archive" -C "$app_dir"
-            rm -f "$archive"
-            mv "$env_file" "$app_dir/.env"
-            chmod 600 "$app_dir/.env"
-            cd "$app_dir"
-
-            if grep -q '^APP_IMAGE=' .env; then
-              sed -i "s|^APP_IMAGE=.*$|APP_IMAGE=$APP_IMAGE|" .env
-            else
-              printf 'APP_IMAGE=%s\n' "$APP_IMAGE" >> .env
-            fi
-
-            printf '%s' "$GHCR_READ_TOKEN" | docker login ghcr.io --username "$GHCR_USERNAME" --password-stdin
-            docker compose -f compose.yaml -f compose.prod.yaml pull app
-            docker compose -f compose.yaml -f compose.prod.yaml up -d --remove-orphans
-            docker compose -f compose.yaml -f compose.prod.yaml ps
-
-            app_domain=$(sed -n 's/^APP_DOMAIN=//p' .env | tail -n 1)
-            test -n "$app_domain"
-            for attempt in $(seq 1 30); do
-              if curl -fsS --max-time 10 "https://$app_domain/api/health" | grep -q '"status":"ok"'; then
-                exit 0
-              fi
-              sleep 5
-            done
-
-            docker compose -f compose.yaml -f compose.prod.yaml logs --tail=100 app caddy
-            exit 1
+        run: ssh -F "$RUNNER_TEMP/ssh/config" korekto-deploy "bash /tmp/korekto-$RUN_ID.deploy.sh $RUN_ID"
