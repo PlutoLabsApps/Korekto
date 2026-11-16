@@ -34,16 +34,16 @@ Configure SSH key authentication for `korekto`. Disable password authentication 
 
 Open **Settings → Secrets and variables → Actions → New repository secret**. Add these secrets:
 
-| Secret                     | Value                                                         |
-| -------------------------- | ------------------------------------------------------------- |
-| `ENV_FILE`                 | The complete multiline contents of the production `.env` file |
-| `HETZNER_HOST`             | Server IP address or SSH hostname                             |
+| Secret                     | Value                                                          |
+| -------------------------- | -------------------------------------------------------------- |
+| `ENV_FILE`                 | The complete multiline contents of the production `.env` file  |
+| `HETZNER_HOST`             | Server IP address or SSH hostname                              |
 | `HETZNER_USERNAME`         | `korekto`                                                      |
 | `HETZNER_SSH_KEY`          | Private SSH key for `korekto`, including its header and footer |
-| `HETZNER_SSH_PORT`         | SSH port; optional, defaults to `22`                          |
-| `HETZNER_HOST_FINGERPRINT` | SHA256 fingerprint of the server's ED25519 host key           |
-| `GHCR_USERNAME`            | GitHub user or organization used to read GHCR                 |
-| `GHCR_READ_TOKEN`          | GitHub token with `read:packages` for the GHCR image          |
+| `HETZNER_SSH_PORT`         | SSH port; optional, defaults to `22`                           |
+| `HETZNER_HOST_FINGERPRINT` | SHA256 fingerprint of the server's ED25519 host key            |
+| `GHCR_USERNAME`            | GitHub user or organization used to read GHCR                  |
+| `GHCR_READ_TOKEN`          | GitHub token with `read:packages` for the GHCR image           |
 
 Obtain the host fingerprint from a trusted network and verify it through a second channel before use:
 
