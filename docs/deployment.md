@@ -21,14 +21,14 @@ Install Docker Engine and the Compose plugin by following the [official Docker U
 Create a deployment user and application directory:
 
 ```bash
-sudo adduser deploy
-sudo usermod -aG docker deploy
-sudo install -d -o deploy -g deploy /opt/korekto
+sudo adduser korekto
+sudo usermod -aG docker korekto
+sudo install -d -o korekto -g korekto /opt/korekto
 ```
 
-Membership in `docker` grants effective root access to the host. Use a dedicated user, protect its SSH key, and do not share it for general administration. Log in again as `deploy` and confirm `docker compose version` works without `sudo`.
+Membership in `docker` grants effective root access to the host. Use a dedicated user, protect its SSH key, and do not share it for general administration. Log in again as `korekto` and confirm `docker compose version` works without `sudo`.
 
-Configure SSH key authentication for `deploy`. Disable password authentication after confirming that the key works.
+Configure SSH key authentication for `korekto`. Disable password authentication after confirming that the key works.
 
 ## 2. Add GitHub repository secrets
 
@@ -38,8 +38,8 @@ Open **Settings → Secrets and variables → Actions → New repository secret*
 | -------------------------- | ------------------------------------------------------------- |
 | `ENV_FILE`                 | The complete multiline contents of the production `.env` file |
 | `HETZNER_HOST`             | Server IP address or SSH hostname                             |
-| `HETZNER_USERNAME`         | `deploy`                                                      |
-| `HETZNER_SSH_KEY`          | Private SSH key for `deploy`, including its header and footer |
+| `HETZNER_USERNAME`         | `korekto`                                                      |
+| `HETZNER_SSH_KEY`          | Private SSH key for `korekto`, including its header and footer |
 | `HETZNER_SSH_PORT`         | SSH port; optional, defaults to `22`                          |
 | `HETZNER_HOST_FINGERPRINT` | SHA256 fingerprint of the server's ED25519 host key           |
 | `GHCR_USERNAME`            | GitHub user or organization used to read GHCR                 |
@@ -61,11 +61,11 @@ Start with `.env.example`, without committing the result:
 
 ```dotenv
 APP_IMAGE=ghcr.io/plutolabsapps/korekto:latest
-APP_DOMAIN=korekto.example.com
-ACME_EMAIL=admin@example.com
+APP_DOMAIN=korekto.plutolabs.app
+ACME_EMAIL=info@plutolabs.app
 
 NUXT_PUBLIC_SITE_NAME=Korekto
-NUXT_PUBLIC_SITE_URL=https://korekto.example.com
+NUXT_PUBLIC_SITE_URL=https://korekto.plutolabs.app
 ```
 
 Replace the domain and email. `ACME_EMAIL` receives certificate notices from Let's Encrypt. Add future application secrets to this same multiline `ENV_FILE` secret; never put real values in `.env.example` or Git.
