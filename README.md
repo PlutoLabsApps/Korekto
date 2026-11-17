@@ -14,6 +14,12 @@ npm run dev
 
 Open http://localhost:3000.
 
+## File storage
+
+All application files, including images, PDFs, submissions, attachments, and exports, must be stored in Hetzner Object Storage rather than on local or container disk. Server features must use the abstraction in `server/utils/object-storage.ts`.
+
+Fill in the five `NUXT_OBJECT_STORAGE_*` variables in `.env` before using a file-backed feature. See [the Object Storage guide](docs/object-storage.md) for private bucket creation, credentials, local and production setup, usage examples, and the mandatory storage rules for contributors and AI agents.
+
 ## Quality checks
 
 ```bash

@@ -25,6 +25,13 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    objectStorage: {
+      endpoint: '',
+      region: '',
+      bucket: '',
+      accessKeyId: '',
+      secretAccessKey: '',
+    },
     public: {
       siteName: 'Korekto',
       siteUrl: 'http://localhost:3000',

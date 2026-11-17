@@ -61,9 +61,15 @@ APP_PORT=3000
 
 NUXT_PUBLIC_SITE_NAME=Korekto
 NUXT_PUBLIC_SITE_URL=https://korekto.plutolabs.app
+
+NUXT_OBJECT_STORAGE_ENDPOINT=https://fsn1.your-objectstorage.com
+NUXT_OBJECT_STORAGE_REGION=fsn1
+NUXT_OBJECT_STORAGE_BUCKET=replace-with-your-bucket-name
+NUXT_OBJECT_STORAGE_ACCESS_KEY_ID=replace-with-your-access-key
+NUXT_OBJECT_STORAGE_SECRET_ACCESS_KEY=replace-with-your-secret-key
 ```
 
-Add future application secrets to this same multiline `ENV_FILE` secret; never put real values in `.env.example` or Git. Each deployment replaces `APP_IMAGE` with the full commit SHA being released. Public Nuxt values are read at runtime.
+All five `NUXT_OBJECT_STORAGE_*` values are required before using file storage. See [the Object Storage guide](object-storage.md) for bucket setup, credential handling, and the complete environment contract. Add these private values to the same multiline `ENV_FILE` secret; never put real values in `.env.example` or Git. Each deployment replaces `APP_IMAGE` with the full commit SHA being released. Public Nuxt values and private Object Storage settings are read at runtime.
 
 ## 4. Run the first deployment
 
