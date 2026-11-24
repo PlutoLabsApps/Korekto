@@ -5,6 +5,7 @@ The deployment uses GitHub Actions, GitHub Container Registry (GHCR), OpenSSH, a
 ## Architecture
 
 - GitHub Actions runs formatting, linting, type checking, tests, a production build, and a critical-vulnerability audit.
+- Before building, the deploy checks that `ENV_FILE` contains `POSTGRES_PASSWORD` and a `NUXT_APP_SECRET` of at least 32 characters, and stops otherwise.
 - The release job builds `linux/amd64` and `linux/arm64` images and pushes `ghcr.io/plutolabsapps/korekto:<full-commit-sha>` plus `latest`.
 - The server keeps its configuration in `/opt/korekto/.env` and runs `compose.yaml` with `compose.prod.yaml`.
 - The application container listens on `127.0.0.1:3000` by default. Set `APP_PORT` to change the host port.
@@ -64,6 +65,7 @@ APP_PORT=3000
 NUXT_PUBLIC_SITE_NAME=Korekto
 NUXT_PUBLIC_SITE_URL=https://korekto.plutolabs.app
 NUXT_LOG_LEVEL=info
+NUXT_APP_SECRET=replace-with-openssl-rand-hex-32
 
 POSTGRES_PASSWORD=replace-with-openssl-rand-hex-32
 
@@ -74,7 +76,7 @@ NUXT_OBJECT_STORAGE_ACCESS_KEY_ID=replace-with-your-access-key
 NUXT_OBJECT_STORAGE_SECRET_ACCESS_KEY=replace-with-your-secret-key
 ```
 
-`POSTGRES_PASSWORD` is required; Compose refuses to start without it. Generate it with `openssl rand -hex 32`. `POSTGRES_USER` and `POSTGRES_DB` default to `korekto`, and Compose builds the app's database URL from these values, so `NUXT_DATABASE_URL` and `DB_PORT` are not needed in production.
+`NUXT_APP_SECRET` signs session cookies; the app exits on startup if it is shorter than 32 characters. Changing it logs everyone out. `POSTGRES_PASSWORD` is required; Compose refuses to start without it. Generate it with `openssl rand -hex 32`. `POSTGRES_USER` and `POSTGRES_DB` default to `korekto`, and Compose builds the app's database URL from these values, so `NUXT_DATABASE_URL` and `DB_PORT` are not needed in production.
 
 All five `NUXT_OBJECT_STORAGE_*` values are required before using file storage. See [the Object Storage guide](object-storage.md) for bucket setup, credential handling, and the complete environment contract. Add these private values to the same multiline `ENV_FILE` secret; never put real values in `.env.example` or Git. Each deployment replaces `APP_IMAGE` with the full commit SHA being released. Public Nuxt values and private Object Storage settings are read at runtime.
 

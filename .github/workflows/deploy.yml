@@ -16,8 +16,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  check-env:
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify required production secrets
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: |
+          set -euo pipefail
+          value() { printf '%s\n' "$ENV_FILE" | sed -n "s/^$1=//p" | tail -n 1 | tr -d "\"'"; }
+          failed=0
+          if [ -z "$(value POSTGRES_PASSWORD)" ]; then
+            echo "::error::ENV_FILE is missing POSTGRES_PASSWORD"
+            failed=1
+          fi
+          app_secret=$(value NUXT_APP_SECRET)
+          if [ "${#app_secret}" -lt 32 ]; then
+            echo "::error::ENV_FILE needs NUXT_APP_SECRET with at least 32 characters"
+            failed=1
+          fi
+          exit "$failed"
+
+  build:
+    needs: check-env
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
