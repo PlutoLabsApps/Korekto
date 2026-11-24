@@ -25,6 +25,9 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    database: {
+      url: '',
+    },
     objectStorage: {
       endpoint: '',
       region: '',
