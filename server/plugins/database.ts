@@ -2,12 +2,13 @@ import { resolve } from 'node:path'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { defineNitroPlugin, useRuntimeConfig } from '#imports'
 import { closeDb, useDb } from '../utils/db'
+import { useLogger } from '../utils/logger'
 
 const MIGRATIONS_FOLDER = resolve(process.cwd(), 'server/db/migrations')
 
 export default defineNitroPlugin((nitroApp) => {
   const ready = runMigrations().catch((error: unknown) => {
-    console.error('[database] Migrations failed:', error)
+    useLogger('database').error('Migrations failed:', error)
     if (!import.meta.dev) {
       process.exit(1)
     }
@@ -21,7 +22,7 @@ export default defineNitroPlugin((nitroApp) => {
 async function runMigrations(): Promise<void> {
   if (!useRuntimeConfig().database.url) {
     if (import.meta.dev) {
-      console.warn('[database] NUXT_DATABASE_URL is not set; skipping migrations.')
+      useLogger('database').warn('NUXT_DATABASE_URL is not set; skipping migrations.')
       return
     }
     throw new Error('NUXT_DATABASE_URL is not set.')
@@ -29,5 +30,5 @@ async function runMigrations(): Promise<void> {
 
   const startedAt = Date.now()
   await migrate(useDb(), { migrationsFolder: MIGRATIONS_FOLDER })
-  console.info(`[database] Migrations are up to date (${Date.now() - startedAt} ms).`)
+  useLogger('database').info(`Migrations are up to date (${Date.now() - startedAt} ms).`)
 }
