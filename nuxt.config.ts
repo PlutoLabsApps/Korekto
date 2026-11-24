@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     '@nuxt/test-utils/module',
     '@pinia/nuxt',
     '@vueuse/nuxt',
+    'nuxt-auth-utils',
   ],
   css: ['~/assets/css/main.css'],
   app: {
@@ -26,6 +27,9 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     logLevel: 'info',
+    session: {
+      maxAge: 60 * 60 * 24 * 30,
+    },
     database: {
       url: '',
     },
