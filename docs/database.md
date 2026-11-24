@@ -83,6 +83,17 @@ Rules:
 - Prefer additive changes (new tables, new nullable or defaulted columns). They keep older releases compatible for rollback.
 - `drizzle-kit push` is for throwaway experiments only. It changes the database without creating a migration.
 
+### Destructive migrations
+
+CI runs `npm run db:check`, which fails when a migration contains `DROP TABLE`, `DROP COLUMN`, `DROP SCHEMA`, `DROP TYPE`, `DROP VIEW`, `RENAME COLUMN`, `RENAME TO`, `TRUNCATE`, `DELETE FROM` or `SET DATA TYPE`. To allow one intentionally, add a line with the reason at the top of that migration file:
+
+```sql
+-- allow-destructive: name replaced by full_name, data copied in 0004
+ALTER TABLE "users" DROP COLUMN "name";
+```
+
+Take a backup before deploying it.
+
 ## Production
 
 - The image contains `server/db/migrations/`. Each deployment starts the new app container, which applies pending migrations before serving requests.
