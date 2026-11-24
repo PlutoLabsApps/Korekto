@@ -7,3 +7,4 @@ dist
 .superpowers
 *.log
 package-lock.json
+server/db/migrations
