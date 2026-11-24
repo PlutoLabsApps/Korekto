@@ -49,5 +49,5 @@ for ((attempt = 1; attempt <= 30; attempt++)); do
   sleep 5
 done
 
-docker compose -f compose.yaml -f compose.prod.yaml logs --tail=100 app
+docker compose -f compose.yaml -f compose.prod.yaml logs --tail=100 app db
 exit 1
