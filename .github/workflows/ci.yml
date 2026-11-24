@@ -27,6 +27,7 @@ jobs:
       - run: npm ci
       - run: npm run format:check
       - run: npm run lint
+      - run: npm run db:check
       - run: npm run typecheck
       - run: npm run test
       - run: npm run build
@@ -35,6 +36,7 @@ jobs:
       - name: Verify production Compose networking
         env:
           APP_IMAGE: ghcr.io/plutolabsapps/korekto:test
+          POSTGRES_PASSWORD: ci-only
         run: |
           COMPOSE_JSON="$(docker compose -f compose.yaml -f compose.prod.yaml config --format json)"
           export COMPOSE_JSON
@@ -45,7 +47,10 @@ jobs:
             if (app.ports?.length !== 1 || app.ports[0].host_ip !== "127.0.0.1" || app.ports[0].target !== 3000) {
               throw new Error("Production app must publish only container port 3000 on 127.0.0.1");
             }
-            if (Object.keys(config.services).length !== 1) {
-              throw new Error("Production Compose must contain only the app service");
+            if (Object.keys(config.services).sort().join(",") !== "app,db") {
+              throw new Error("Production Compose must contain only the app and db services");
+            }
+            if (config.services.db.ports?.length) {
+              throw new Error("Production database must not publish any ports");
             }
           '

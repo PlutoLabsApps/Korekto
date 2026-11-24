@@ -19,6 +19,7 @@ ENV NODE_ENV=production \
     NITRO_PORT=3000
 
 COPY --from=build --chown=node:node /app/.output ./.output
+COPY --from=build --chown=node:node /app/server/db/migrations ./server/db/migrations
 
 USER node
 

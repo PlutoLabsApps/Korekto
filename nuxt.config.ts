@@ -25,6 +25,10 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    logLevel: 'info',
+    database: {
+      url: '',
+    },
     objectStorage: {
       endpoint: '',
       region: '',

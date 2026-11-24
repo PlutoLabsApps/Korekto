@@ -9,10 +9,15 @@ Requirements: Node.js 22.22.3+ (or another version allowed by `package.json`) an
 ```bash
 cp .env.example .env
 npm ci
+docker compose up -d db
 npm run dev
 ```
 
 Open http://localhost:3000.
+
+## Database
+
+PostgreSQL runs in Docker and is accessed through Drizzle ORM with `useDb()` from `server/utils/db.ts`. Migrations are applied automatically when the server starts. See [the database guide](docs/database.md) for schema changes, migrations, configuration, logs, and backups.
 
 ## File storage
 
@@ -48,4 +53,4 @@ The production override runs only the application container on the host's loopba
 
 Use short-lived feature branches such as `feature/class-management` and open a pull request into `main`. Keep changes focused and run all quality checks before requesting review. Main-branch deployments start only after CI succeeds.
 
-The starter stack includes Nuxt 4, Vue, TypeScript, Tailwind CSS, Pinia, VueUse, Lucide (`@lucide/vue`), Zod, Nuxt Image, Vitest, ESLint, and Prettier. Product integrations such as the database and AI provider will be selected during their architecture tasks rather than being fixed by this scaffold.
+The starter stack includes Nuxt 4, Vue, TypeScript, Tailwind CSS, Pinia, VueUse, Lucide (`@lucide/vue`), Zod, Nuxt Image, Vitest, ESLint, and Prettier. The database layer uses PostgreSQL with Drizzle ORM. The AI provider will be selected during its architecture task.

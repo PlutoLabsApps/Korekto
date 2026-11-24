@@ -15,6 +15,30 @@ services:
       NUXT_OBJECT_STORAGE_BUCKET: ${NUXT_OBJECT_STORAGE_BUCKET:-}
       NUXT_OBJECT_STORAGE_ACCESS_KEY_ID: ${NUXT_OBJECT_STORAGE_ACCESS_KEY_ID:-}
       NUXT_OBJECT_STORAGE_SECRET_ACCESS_KEY: ${NUXT_OBJECT_STORAGE_SECRET_ACCESS_KEY:-}
+      NUXT_DATABASE_URL: postgres://${POSTGRES_USER:-korekto}:${POSTGRES_PASSWORD:-korekto}@db:5432/${POSTGRES_DB:-korekto}
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - '127.0.0.1:${APP_PORT:-3000}:3000'
     restart: unless-stopped
+
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-korekto}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-korekto}
+      POSTGRES_DB: ${POSTGRES_DB:-korekto}
+    volumes:
+      - db-data:/var/lib/postgresql
+    ports:
+      - '127.0.0.1:${DB_PORT:-5432}:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  db-data:

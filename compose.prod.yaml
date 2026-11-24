@@ -5,3 +5,8 @@ services:
     read_only: true
     tmpfs:
       - /tmp
+
+  db:
+    ports: !reset []
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
