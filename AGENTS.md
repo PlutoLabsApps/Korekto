@@ -25,13 +25,13 @@ Database: `npm run db:generate` (create a migration from the schema), `npm run d
 - `server/db/schema.ts`: all tables; `server/db/migrations/`: generated migrations
 - `shared/`: code used by both `app/` and `server/` (constants, Zod schemas, types)
 - `i18n/locales/`: `cs.json` and `en.json`
-- `docs/`: database, deployment and object storage guides
+- `docs/`: auth, database, deployment and object storage guides
 
 ## Rules
 
 - **Shared values:** limits, enums and Zod schemas used by both UI and API live in `shared/utils/` as the single source of truth. Never put secrets or database code in `shared/`.
 - **Text:** never hardcode user-facing text. Add the key to both `cs.json` and `en.json`; a test fails if the files differ. Zod schemas and API errors use message keys (`validation.*`, `errors.*`), which the frontend translates.
-- **Endpoints:** validate input with `readValidatedJson(event, schema)`. Protect with `requireUser(event)` or `requireRole(event, 'teacher' | 'student')`. Return users only through `toPublicUser` and never return `passwordHash`.
+- **Endpoints:** validate input with `readValidatedJson(event, schema)`. Protect with `requireUser(event)` or `requireRole(event, 'teacher' | 'student')`. Return users only through `toPublicUser` and never return `passwordHash`. See `docs/auth.md`.
 - **Permissions:** check them on the server. Hiding UI is not access control.
 - **Database:** change `server/db/schema.ts`, run `npm run db:generate`, review the SQL, and commit it together with the schema. Never edit a migration that is already on `main`. Destructive statements need `-- allow-destructive: <reason>` at the top of the migration. See `docs/database.md`.
 - **Files:** store every application file in Hetzner Object Storage through `server/utils/object-storage.ts`, never on local disk. See `docs/object-storage.md`.
