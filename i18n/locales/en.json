@@ -5,7 +5,6 @@
   },
   "header": {
     "home": "Korekto — home",
-    "tagline": "AI with human review",
     "language": "Language"
   },
   "footer": {
@@ -50,6 +49,42 @@
     "emailTaken": "This email is already registered.",
     "invalidCredentials": "Incorrect email or password.",
     "unauthorized": "Please log in.",
-    "forbidden": "You don't have permission to do this."
+    "forbidden": "You don't have permission to do this.",
+    "unexpected": "Something went wrong. Please try again."
+  },
+  "nav": {
+    "login": "Log in",
+    "register": "Sign up",
+    "logout": "Log out"
+  },
+  "roles": {
+    "teacher": "Teacher",
+    "student": "Student"
+  },
+  "fields": {
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role"
+  },
+  "auth": {
+    "login": {
+      "title": "Log in",
+      "submit": "Log in",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Sign up"
+    },
+    "register": {
+      "title": "Sign up",
+      "submit": "Create account",
+      "passwordHint": "At least {passwordMin} characters.",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Log in"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "greeting": "Hello, {name}.",
+    "role": "Your role: {role}"
   }
 }

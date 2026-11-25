@@ -4,11 +4,13 @@ const localeHead = useLocaleHead({ seo: false })
 
 useHead(() => ({
   htmlAttrs: { lang: localeHead.value.htmlAttrs.lang },
-  title: t('meta.title'),
+  titleTemplate: (title) => (title ? `${title} · Korekto` : t('meta.title')),
   meta: [{ name: 'description', content: t('meta.description') }],
 }))
 </script>
 
 <template>
-  <NuxtPage />
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
