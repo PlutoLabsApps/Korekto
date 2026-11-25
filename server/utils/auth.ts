@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { createError, type H3Event } from 'h3'
-import type { SessionEvent, User as SessionUser } from '#auth-utils'
+import type { SessionEvent, User as SessionUser, UserSession } from '#auth-utils'
 import { users, type User } from '../db/schema'
 import { useDb } from './db'
 
@@ -50,4 +50,13 @@ export async function requireRole(event: H3Event, role: User['role']): Promise<A
     throw createError({ statusCode: 403, message: 'errors.forbidden' })
   }
   return user
+}
+
+export async function refreshSessionUser(session: UserSession, event: SessionEvent): Promise<void> {
+  const user = await findSessionUser(event)
+  if (!user) {
+    await clearUserSession(event as H3Event)
+    throw createError({ statusCode: 401, message: 'errors.unauthorized' })
+  }
+  session.user = toPublicUser(user)
 }
