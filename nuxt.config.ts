@@ -9,23 +9,28 @@ export default defineNuxtConfig({
     '@nuxt/test-utils/module',
     '@pinia/nuxt',
     '@vueuse/nuxt',
+    'nuxt-auth-utils',
+    '@nuxtjs/i18n',
   ],
   css: ['~/assets/css/main.css'],
-  app: {
-    head: {
-      htmlAttrs: { lang: 'cs' },
-      title: 'Korekto — hodnocení s lidskou kontrolou',
-      meta: [
-        {
-          name: 'description',
-          content:
-            'Korekto propojuje nahrání žákovských prací, návrh AI hodnocení a kontrolu učitelem.',
-        },
-      ],
+  i18n: {
+    strategy: 'no_prefix',
+    defaultLocale: 'cs',
+    locales: [
+      { code: 'cs', language: 'cs-CZ', name: 'Čeština', file: 'cs.json' },
+      { code: 'en', language: 'en-US', name: 'English', file: 'en.json' },
+    ],
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'korekto_locale',
+      fallbackLocale: 'cs',
     },
   },
   runtimeConfig: {
     logLevel: 'info',
+    session: {
+      maxAge: 60 * 60 * 24 * 30,
+    },
     database: {
       url: '',
     },
@@ -46,5 +51,8 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ['zod'],
+    },
   },
 })

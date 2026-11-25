@@ -19,6 +19,10 @@ Open http://localhost:3000.
 
 PostgreSQL runs in Docker and is accessed through Drizzle ORM with `useDb()` from `server/utils/db.ts`. Migrations are applied automatically when the server starts. See [the database guide](docs/database.md) for schema changes, migrations, configuration, logs, and backups.
 
+## Authentication
+
+Email and password login with `teacher` and `student` roles. Endpoints use `requireUser` or `requireRole`, pages use the `auth`, `guest` and `role` middleware. See [the authentication guide](docs/auth.md).
+
 ## File storage
 
 All application files, including images, PDFs, submissions, attachments, and exports, must be stored in Hetzner Object Storage rather than on local or container disk. Server features must use the abstraction in `server/utils/object-storage.ts`.
