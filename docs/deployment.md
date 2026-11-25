@@ -133,6 +133,7 @@ Rolling back the image does not roll back database migrations. It is safe when t
 ## Rotate secrets
 
 - **Application values:** update `ENV_FILE`; the next deployment replaces `/opt/korekto/.env` with mode `600`.
+- **`NUXT_APP_SECRET`:** update it in `ENV_FILE` and deploy. All existing sessions become invalid and every user has to log in again.
 - **Database password:** Postgres keeps the password it was created with, so changing `ENV_FILE` alone breaks the connection. First change it in the database, then update `POSTGRES_PASSWORD` in `ENV_FILE` and deploy:
 
   ```bash
