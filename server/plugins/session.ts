@@ -7,7 +7,7 @@ export default defineNitroPlugin(() => {
     const user = await findSessionUser(event)
     if (!user) {
       await clearUserSession(event)
-      throw createError({ statusCode: 401, message: 'Přihlaste se.' })
+      throw createError({ statusCode: 401, message: 'errors.unauthorized' })
     }
     session.user = toPublicUser(user)
   })

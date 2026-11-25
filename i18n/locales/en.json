@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "title": "Korekto — assessment with human review",
+    "description": "Korekto connects uploading student work, AI-suggested grading and review by the teacher."
+  },
+  "header": {
+    "home": "Korekto — home",
+    "tagline": "AI with human review",
+    "language": "Language"
+  },
+  "footer": {
+    "tagline": "AI-assisted grading. The decision always belongs to the teacher."
+  },
+  "home": {
+    "eyebrow": "Assessment with human review",
+    "lead": "Less time grading. More time for meaningful feedback.",
+    "description": "A shared foundation for classes, assignments and student work — from upload to a result the teacher has actually reviewed.",
+    "principleLabel": "Korekto principle",
+    "principleTitle": "The teacher always has the final say",
+    "principleText": "No AI suggestion is published without the teacher actively reviewing and approving it.",
+    "workflowTitle": "From work to result without shortcuts",
+    "workflowText": "Three steps where responsibility always stays clear.",
+    "features": {
+      "upload": {
+        "title": "Upload work",
+        "description": "A photo, scan or PDF is securely assigned to the student and the assignment."
+      },
+      "ai": {
+        "title": "AI grading suggestion",
+        "description": "AI drafts points and feedback and marks the parts it is unsure about."
+      },
+      "review": {
+        "title": "Review and publish",
+        "description": "The teacher edits and approves the result. The student only sees the final grade."
+      }
+    }
+  },
+  "validation": {
+    "nameRequired": "Enter your name.",
+    "nameMax": "Name can be at most {nameMax} characters.",
+    "emailInvalid": "Enter a valid email.",
+    "emailMax": "Email can be at most {emailMax} characters.",
+    "passwordRequired": "Enter your password.",
+    "passwordMin": "Password must be at least {passwordMin} characters.",
+    "passwordMax": "Password can be at most {passwordMax} characters.",
+    "roleRequired": "Choose a role."
+  },
+  "errors": {
+    "invalidInput": "Invalid input.",
+    "emailTaken": "This email is already registered.",
+    "invalidCredentials": "Incorrect email or password.",
+    "unauthorized": "Please log in.",
+    "forbidden": "You don't have permission to do this."
+  }
+}

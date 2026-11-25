@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
     .returning()
 
   if (!user) {
-    throw createError({ statusCode: 409, message: 'Tento e-mail je už zaregistrovaný.' })
+    throw createError({ statusCode: 409, message: 'errors.emailTaken' })
   }
 
   await startUserSession(event, user)

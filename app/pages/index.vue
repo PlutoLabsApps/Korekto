@@ -1,26 +1,31 @@
 <script setup lang="ts">
 import { ClipboardCheck, ShieldCheck, Sparkles, Upload } from '@lucide/vue'
 
-const features = [
+const { t } = useI18n()
+
+const features = computed(() => [
   {
-    title: 'Nahrání práce',
-    description: 'Fotografie, sken nebo PDF se bezpečně přiřadí ke žákovi a zadání.',
+    key: 'upload',
+    title: t('home.features.upload.title'),
+    description: t('home.features.upload.description'),
     icon: Upload,
     step: '01',
   },
   {
-    title: 'Návrh AI hodnocení',
-    description: 'AI připraví body, zpětnou vazbu a označí místa, kde si není jistá.',
+    key: 'ai',
+    title: t('home.features.ai.title'),
+    description: t('home.features.ai.description'),
     icon: Sparkles,
     step: '02',
   },
   {
-    title: 'Kontrola a zveřejnění',
-    description: 'Učitel upraví a schválí výsledek. Žákovi se zobrazí až finální hodnocení.',
+    key: 'review',
+    title: t('home.features.review.title'),
+    description: t('home.features.review.description'),
     icon: ClipboardCheck,
     step: '03',
   },
-]
+])
 </script>
 
 <template>
@@ -38,7 +43,7 @@ const features = [
         >
           <div>
             <p class="mb-5 text-sm font-semibold tracking-[0.16em] text-teal-700 uppercase">
-              Hodnocení s lidskou kontrolou
+              {{ t('home.eyebrow') }}
             </p>
             <h1
               id="page-title"
@@ -47,24 +52,23 @@ const features = [
               Korekto
             </h1>
             <p class="mt-6 max-w-2xl text-xl leading-8 font-medium text-slate-700 sm:text-2xl">
-              Méně času na opravování. Více času na smysluplnou zpětnou vazbu.
+              {{ t('home.lead') }}
             </p>
             <p class="mt-5 max-w-xl leading-7 text-slate-600">
-              Společný základ pro třídy, zadání a žákovské práce — od nahrání až po výsledek, který
-              učitel skutečně posoudil.
+              {{ t('home.description') }}
             </p>
           </div>
 
           <aside
             class="rounded-3xl border border-teal-900/10 bg-slate-950 p-7 text-white shadow-xl shadow-teal-950/10 sm:p-8"
-            aria-label="Zásada Korekto"
+            :aria-label="t('home.principleLabel')"
           >
             <span class="grid size-12 place-items-center rounded-2xl bg-teal-400/15 text-teal-300">
               <ShieldCheck :size="25" :stroke-width="1.8" aria-hidden="true" />
             </span>
-            <p class="mt-8 text-2xl leading-9 font-semibold">Učitel má vždy poslední slovo</p>
+            <p class="mt-8 text-2xl leading-9 font-semibold">{{ t('home.principleTitle') }}</p>
             <p class="mt-3 leading-7 text-slate-300">
-              Žádný návrh AI se nezveřejní bez aktivní kontroly a schválení učitelem.
+              {{ t('home.principleText') }}
             </p>
           </aside>
         </div>
@@ -79,14 +83,14 @@ const features = [
             id="workflow-title"
             class="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
           >
-            Od práce k výsledku bez zkratů
+            {{ t('home.workflowTitle') }}
           </h2>
           <p class="mt-3 leading-7 text-slate-600">
-            Tři kroky, u kterých zůstává odpovědnost vždy jasná.
+            {{ t('home.workflowText') }}
           </p>
         </div>
         <div class="grid gap-5 md:grid-cols-3">
-          <FeatureCard v-for="feature in features" :key="feature.title" v-bind="feature" />
+          <FeatureCard v-for="{ key, ...feature } in features" :key="key" v-bind="feature" />
         </div>
       </section>
     </main>

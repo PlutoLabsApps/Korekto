@@ -39,7 +39,7 @@ export async function requireUser(event: H3Event): Promise<AuthUser> {
   const user = await findSessionUser(event)
   if (!user) {
     await clearUserSession(event)
-    throw createError({ statusCode: 401, message: 'Přihlaste se.' })
+    throw createError({ statusCode: 401, message: 'errors.unauthorized' })
   }
   return user
 }
@@ -47,7 +47,7 @@ export async function requireUser(event: H3Event): Promise<AuthUser> {
 export async function requireRole(event: H3Event, role: User['role']): Promise<AuthUser> {
   const user = await requireUser(event)
   if (user.role !== role) {
-    throw createError({ statusCode: 403, message: 'K této akci nemáte oprávnění.' })
+    throw createError({ statusCode: 403, message: 'errors.forbidden' })
   }
   return user
 }

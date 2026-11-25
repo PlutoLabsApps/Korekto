@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "title": "Korekto — hodnocení s lidskou kontrolou",
+    "description": "Korekto propojuje nahrání žákovských prací, návrh AI hodnocení a kontrolu učitelem."
+  },
+  "header": {
+    "home": "Korekto — domů",
+    "tagline": "AI s lidskou kontrolou",
+    "language": "Jazyk"
+  },
+  "footer": {
+    "tagline": "Hodnocení pomocí AI. Rozhodnutí vždy patří učiteli."
+  },
+  "home": {
+    "eyebrow": "Hodnocení s lidskou kontrolou",
+    "lead": "Méně času na opravování. Více času na smysluplnou zpětnou vazbu.",
+    "description": "Společný základ pro třídy, zadání a žákovské práce — od nahrání až po výsledek, který učitel skutečně posoudil.",
+    "principleLabel": "Zásada Korekto",
+    "principleTitle": "Učitel má vždy poslední slovo",
+    "principleText": "Žádný návrh AI se nezveřejní bez aktivní kontroly a schválení učitelem.",
+    "workflowTitle": "Od práce k výsledku bez zkratů",
+    "workflowText": "Tři kroky, u kterých zůstává odpovědnost vždy jasná.",
+    "features": {
+      "upload": {
+        "title": "Nahrání práce",
+        "description": "Fotografie, sken nebo PDF se bezpečně přiřadí ke žákovi a zadání."
+      },
+      "ai": {
+        "title": "Návrh AI hodnocení",
+        "description": "AI připraví body, zpětnou vazbu a označí místa, kde si není jistá."
+      },
+      "review": {
+        "title": "Kontrola a zveřejnění",
+        "description": "Učitel upraví a schválí výsledek. Žákovi se zobrazí až finální hodnocení."
+      }
+    }
+  },
+  "validation": {
+    "nameRequired": "Zadejte jméno.",
+    "nameMax": "Jméno může mít nejvýše {nameMax} znaků.",
+    "emailInvalid": "Zadejte platný e-mail.",
+    "emailMax": "E-mail může mít nejvýše {emailMax} znaků.",
+    "passwordRequired": "Zadejte heslo.",
+    "passwordMin": "Heslo musí mít alespoň {passwordMin} znaků.",
+    "passwordMax": "Heslo může mít nejvýše {passwordMax} znaků.",
+    "roleRequired": "Vyberte roli."
+  },
+  "errors": {
+    "invalidInput": "Neplatné údaje.",
+    "emailTaken": "Tento e-mail je už zaregistrovaný.",
+    "invalidCredentials": "Nesprávný e-mail nebo heslo.",
+    "unauthorized": "Přihlaste se.",
+    "forbidden": "K této akci nemáte oprávnění."
+  }
+}

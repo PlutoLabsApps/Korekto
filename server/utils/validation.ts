@@ -9,7 +9,7 @@ export async function readValidatedJson<T extends z.ZodType>(
   if (!result.success) {
     throw createError({
       statusCode: 400,
-      message: 'Neplatné údaje.',
+      message: 'errors.invalidInput',
       data: { fieldErrors: z.flattenError(result.error).fieldErrors },
     })
   }

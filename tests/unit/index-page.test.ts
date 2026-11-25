@@ -1,8 +1,12 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import IndexPage from '../../app/pages/index.vue'
 
 describe('home page', () => {
+  beforeEach(async () => {
+    await useNuxtApp().$i18n.setLocale('cs')
+  })
+
   it('presents the teacher-controlled assessment workflow', async () => {
     const wrapper = await mountSuspended(IndexPage)
 
@@ -12,6 +16,14 @@ describe('home page', () => {
     expect(wrapper.get('main').text()).toContain('Nahrání práce')
     expect(wrapper.get('main').text()).toContain('Návrh AI hodnocení')
     expect(wrapper.get('main').text()).toContain('Kontrola a zveřejnění')
+  })
+
+  it('renders in English when the locale is switched', async () => {
+    await useNuxtApp().$i18n.setLocale('en')
+    const wrapper = await mountSuspended(IndexPage)
+
+    expect(wrapper.get('main').text()).toContain('The teacher always has the final say')
+    expect(wrapper.get('main').text()).toContain('Upload work')
   })
 
   it('keeps decorative icons out of the accessibility tree', async () => {

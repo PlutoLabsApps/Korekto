@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
 
   if (!user || !valid) {
     useLogger('auth').warn('Failed login attempt')
-    throw createError({ statusCode: 401, message: 'Nesprávný e-mail nebo heslo.' })
+    throw createError({ statusCode: 401, message: 'errors.invalidCredentials' })
   }
 
   await startUserSession(event, user)

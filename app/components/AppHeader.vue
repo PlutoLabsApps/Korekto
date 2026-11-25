@@ -8,14 +8,19 @@ import { ScanLine } from '@lucide/vue'
       <NuxtLink
         to="/"
         class="inline-flex min-h-7 items-center gap-2.5 rounded-sm text-lg font-bold tracking-tight text-slate-950"
-        aria-label="Korekto — domů"
+        :aria-label="$t('header.home')"
       >
         <span class="grid size-9 place-items-center rounded-xl bg-teal-700 text-white">
           <ScanLine :size="20" :stroke-width="2" aria-hidden="true" />
         </span>
         Korekto
       </NuxtLink>
-      <span class="hidden text-sm font-medium text-slate-500 sm:block">AI s lidskou kontrolou</span>
+      <div class="flex items-center gap-4">
+        <span class="hidden text-sm font-medium text-slate-500 sm:block">{{
+          $t('header.tagline')
+        }}</span>
+        <LanguageSwitcher />
+      </div>
     </div>
   </header>
 </template>
