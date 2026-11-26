@@ -18,7 +18,7 @@ async function logout() {
         class="inline-flex min-h-7 items-center gap-2.5 rounded-sm text-lg font-bold tracking-tight text-slate-950"
         :aria-label="t('header.home')"
       >
-        <span class="grid size-9 place-items-center rounded-xl bg-teal-700 text-white">
+        <span class="grid size-9 place-items-center rounded-xl bg-primary-600 text-white">
           <ScanLine :size="20" :stroke-width="2" aria-hidden="true" />
         </span>
         Korekto
@@ -29,24 +29,11 @@ async function logout() {
           <span class="hidden text-slate-600 sm:inline">
             {{ user.name }} · {{ t(`roles.${user.role}`) }}
           </span>
-          <button
-            type="button"
-            class="font-medium text-slate-700 hover:text-slate-950"
-            @click="logout"
-          >
-            {{ t('nav.logout') }}
-          </button>
+          <UiButton variant="ghost" @click="logout">{{ t('nav.logout') }}</UiButton>
         </template>
         <template v-else>
-          <NuxtLink to="/login" class="font-medium text-slate-700 hover:text-slate-950">
-            {{ t('nav.login') }}
-          </NuxtLink>
-          <NuxtLink
-            to="/register"
-            class="rounded-lg bg-teal-700 px-3 py-1.5 font-semibold text-white hover:bg-teal-800"
-          >
-            {{ t('nav.register') }}
-          </NuxtLink>
+          <UiButton variant="ghost" to="/login">{{ t('nav.login') }}</UiButton>
+          <UiButton to="/register">{{ t('nav.register') }}</UiButton>
         </template>
         <LanguageSwitcher />
       </div>

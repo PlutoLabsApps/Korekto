@@ -53,79 +53,75 @@ async function submit() {
 
 <template>
   <main id="content" class="flex flex-1 items-start justify-center px-5 py-16">
-    <form
-      class="w-full max-w-sm space-y-5 rounded-2xl border border-slate-200 bg-white p-7 shadow-sm"
-      novalidate
-      @submit.prevent="submit"
-    >
-      <h1 class="text-2xl font-bold tracking-tight text-slate-950">
-        {{ t('auth.register.title') }}
-      </h1>
+    <UiCard class="w-full max-w-sm">
+      <form class="space-y-5" novalidate @submit.prevent="submit">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-950">
+          {{ t('auth.register.title') }}
+        </h1>
 
-      <p v-if="formError" role="alert" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-        {{ formError }}
-      </p>
-
-      <FormField
-        id="name"
-        v-model="form.name"
-        :label="t('fields.name')"
-        :error="fieldErrors.name"
-        autocomplete="name"
-        :maxlength="NAME_MAX_LENGTH"
-      />
-      <FormField
-        id="email"
-        v-model="form.email"
-        :label="t('fields.email')"
-        :error="fieldErrors.email"
-        type="email"
-        autocomplete="email"
-        :maxlength="EMAIL_MAX_LENGTH"
-      />
-      <FormField
-        id="password"
-        v-model="form.password"
-        :label="t('fields.password')"
-        :error="fieldErrors.password"
-        :hint="t('auth.register.passwordHint', AUTH_MESSAGE_PARAMS)"
-        type="password"
-        autocomplete="new-password"
-        :maxlength="PASSWORD_MAX_LENGTH"
-      />
-
-      <fieldset :aria-describedby="fieldErrors.role ? 'role-error' : undefined">
-        <legend class="text-sm font-medium text-slate-800">{{ t('fields.role') }}</legend>
-        <div class="mt-1.5 grid grid-cols-2 gap-2">
-          <label
-            v-for="role in USER_ROLES"
-            :key="role"
-            class="flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2"
-            :class="form.role === role ? 'border-teal-700 bg-teal-50' : 'border-slate-300'"
-          >
-            <input v-model="form.role" type="radio" name="role" :value="role" />
-            {{ t(`roles.${role}`) }}
-          </label>
-        </div>
-        <p v-if="fieldErrors.role" id="role-error" class="mt-1.5 text-sm text-red-600">
-          {{ fieldErrors.role }}
+        <p
+          v-if="formError"
+          role="alert"
+          class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
+        >
+          {{ formError }}
         </p>
-      </fieldset>
 
-      <button
-        type="submit"
-        class="w-full rounded-lg bg-teal-700 px-4 py-2.5 font-semibold text-white hover:bg-teal-800 disabled:opacity-60"
-        :disabled="pending"
-      >
-        {{ t('auth.register.submit') }}
-      </button>
+        <FormField
+          id="name"
+          v-model="form.name"
+          :label="t('fields.name')"
+          :error="fieldErrors.name"
+          autocomplete="name"
+          :maxlength="NAME_MAX_LENGTH"
+        />
+        <FormField
+          id="email"
+          v-model="form.email"
+          :label="t('fields.email')"
+          :error="fieldErrors.email"
+          type="email"
+          autocomplete="email"
+          :maxlength="EMAIL_MAX_LENGTH"
+        />
+        <FormField
+          id="password"
+          v-model="form.password"
+          :label="t('fields.password')"
+          :error="fieldErrors.password"
+          :hint="t('auth.register.passwordHint', AUTH_MESSAGE_PARAMS)"
+          type="password"
+          autocomplete="new-password"
+          :maxlength="PASSWORD_MAX_LENGTH"
+        />
 
-      <p class="text-center text-sm text-slate-600">
-        {{ t('auth.register.hasAccount') }}
-        <NuxtLink to="/login" class="font-medium text-teal-700 hover:underline">
-          {{ t('auth.register.loginLink') }}
-        </NuxtLink>
-      </p>
-    </form>
+        <fieldset :aria-describedby="fieldErrors.role ? 'role-error' : undefined">
+          <legend class="text-sm font-medium text-slate-800">{{ t('fields.role') }}</legend>
+          <div class="mt-1.5 grid grid-cols-2 gap-2">
+            <label
+              v-for="role in USER_ROLES"
+              :key="role"
+              class="flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2"
+              :class="form.role === role ? 'border-primary-700 bg-primary-50' : 'border-slate-300'"
+            >
+              <input v-model="form.role" type="radio" name="role" :value="role" />
+              {{ t(`roles.${role}`) }}
+            </label>
+          </div>
+          <p v-if="fieldErrors.role" id="role-error" class="mt-1.5 text-sm text-red-600">
+            {{ fieldErrors.role }}
+          </p>
+        </fieldset>
+
+        <UiButton type="submit" block :disabled="pending">{{ t('auth.register.submit') }}</UiButton>
+
+        <p class="text-center text-sm text-slate-600">
+          {{ t('auth.register.hasAccount') }}
+          <NuxtLink to="/login" class="font-medium text-primary-700 hover:underline">
+            {{ t('auth.register.loginLink') }}
+          </NuxtLink>
+        </p>
+      </form>
+    </UiCard>
   </main>
 </template>
