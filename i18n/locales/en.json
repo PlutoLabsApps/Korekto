@@ -124,7 +124,8 @@
     "reject": "Reject"
   },
   "results": {
-    "title": "My results"
+    "title": "My results",
+    "detail": "View details"
   },
   "toast": {
     "region": "Notifications",
@@ -132,5 +133,25 @@
     "more": "Show more",
     "less": "Show less",
     "queued": "+{count} queued"
+  },
+  "upload": {
+    "open": "Upload work",
+    "title": "Upload work",
+    "pick": "Choose photos, scans or PDFs",
+    "formats": "You can select several files at once.",
+    "student": "Student",
+    "submit": "Upload and start grading",
+    "uploading": "Uploading {n} file… | Uploading {n} files…",
+    "uploaded": "{n} file uploaded, grading started | {n} files uploaded, grading started"
+  },
+  "appeal": {
+    "prompt": "Disagree with the grade?",
+    "open": "File an appeal",
+    "reason": "Reason for the appeal",
+    "cancel": "Cancel",
+    "submit": "Send appeal",
+    "sending": "Sending appeal…",
+    "sent": "Your appeal was sent to the teacher",
+    "pending": "Appeal awaiting resolution"
   }
 }

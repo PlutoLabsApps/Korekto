@@ -27,9 +27,14 @@ const classAssignments = computed(() =>
         <UiCard v-for="assignment in classAssignments" :key="assignment.id">
           <div class="flex items-baseline justify-between gap-4">
             <h3 class="font-semibold">{{ assignment.title }}</h3>
-            <span class="text-sm text-slate-500">
-              {{ t('assignments.due', { date: d(new Date(assignment.dueDate), 'short') }) }}
-            </span>
+            <div class="flex items-center gap-3">
+              <span class="text-sm text-slate-500">
+                {{ t('assignments.due', { date: d(new Date(assignment.dueDate), 'short') }) }}
+              </span>
+              <UiButton :to="`/preview/teacher/assignments/${assignment.id}/upload`">
+                {{ t('upload.open') }}
+              </UiButton>
+            </div>
           </div>
           <ul class="mt-4 divide-y divide-slate-100">
             <li

@@ -30,6 +30,9 @@ const published = submissions
           </li>
         </ul>
         <p class="mt-3 text-slate-700">{{ result.overallFeedback }}</p>
+        <UiButton variant="secondary" :to="`/preview/student/results/${result.id}`" class="mt-4">
+          {{ t('results.detail') }}
+        </UiButton>
       </UiCard>
     </div>
   </div>
