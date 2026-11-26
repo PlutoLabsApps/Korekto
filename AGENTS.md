@@ -39,6 +39,14 @@ Database: `npm run db:generate` (create a migration from the schema), `npm run d
 - **Config:** add new environment variables to `.env.example`, `nuxt.config.ts` `runtimeConfig` and the relevant doc. Secrets never go in Git.
 - **Comments:** keep them minimal. Add one short line only where something is non-obvious.
 
+## UI
+
+- Use the components in `app/components/ui/` (`UiButton`, `UiCard`, `UiBadge`), `FormField` for inputs and `useToast()` for feedback after actions (`toast.promise(...)` for loading → success/error). Don't hand-style one-off buttons or alerts.
+- Colors: use `primary-*` for the brand and Tailwind's `slate` for neutrals; never hardcode `blue-*`. The palette is defined once in `app/assets/css/main.css`.
+- The design system is intentionally minimal. When a feature needs a new component or variant, add it to `app/components/ui/` and show it on `/design`, instead of styling it inside the page.
+- Keep UI components presentational: data via props, actions via events, no `$fetch` inside them.
+- `/design` (component gallery) and `/preview` (clickable prototype on mock data in `app/preview/mocks.ts`) exist only in development.
+
 ## Git
 
 - Short-lived branches (`feature/<name>`), pull requests into `main`.

@@ -32,14 +32,14 @@ const features = computed(() => [
   <main id="content" class="flex-1">
     <section class="relative isolate overflow-hidden" aria-labelledby="page-title">
       <div
-        class="absolute inset-x-0 top-0 -z-10 h-80 bg-gradient-to-b from-teal-100/70 to-transparent"
+        class="absolute inset-x-0 top-0 -z-10 h-80 bg-gradient-to-b from-primary-100/70 to-transparent"
         aria-hidden="true"
       />
       <div
         class="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.2fr_0.8fr] lg:items-center"
       >
         <div>
-          <p class="mb-5 text-sm font-semibold tracking-[0.16em] text-teal-700 uppercase">
+          <p class="mb-5 text-sm font-semibold tracking-[0.16em] text-primary-700 uppercase">
             {{ t('home.eyebrow') }}
           </p>
           <h1
@@ -57,10 +57,12 @@ const features = computed(() => [
         </div>
 
         <aside
-          class="rounded-3xl border border-teal-900/10 bg-slate-950 p-7 text-white shadow-xl shadow-teal-950/10 sm:p-8"
+          class="rounded-3xl border border-primary-900/10 bg-slate-950 p-7 text-white shadow-xl shadow-primary-950/10 sm:p-8"
           :aria-label="t('home.principleLabel')"
         >
-          <span class="grid size-12 place-items-center rounded-2xl bg-teal-400/15 text-teal-300">
+          <span
+            class="grid size-12 place-items-center rounded-2xl bg-primary-400/15 text-primary-300"
+          >
             <ShieldCheck :size="25" :stroke-width="1.8" aria-hidden="true" />
           </span>
           <p class="mt-8 text-2xl leading-9 font-semibold">{{ t('home.principleTitle') }}</p>

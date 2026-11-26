@@ -86,5 +86,72 @@
     "title": "Dashboard",
     "greeting": "Hello, {name}.",
     "role": "Your role: {role}"
+  },
+  "preview": {
+    "banner": "Prototype – fake data, nothing is saved.",
+    "title": "Prototype",
+    "teacherFlow": "Classes, assignments and reviewing AI grading.",
+    "studentFlow": "Published results and feedback.",
+    "open": "Open"
+  },
+  "classes": {
+    "title": "My classes",
+    "students": "Students",
+    "studentCount": "{n} student | {n} students",
+    "assignmentCount": "{n} assignment | {n} assignments"
+  },
+  "assignments": {
+    "title": "Assignments",
+    "due": "Due {date}"
+  },
+  "submissions": {
+    "open": "Open",
+    "status": {
+      "processing": "Processing",
+      "needsReview": "Needs review",
+      "published": "Published"
+    }
+  },
+  "review": {
+    "recognizedText": "Recognized text",
+    "scanPlaceholder": "Scan preview",
+    "aiSuggestion": "AI suggestion",
+    "points": "Points",
+    "uncertain": "AI is unsure",
+    "feedback": "Feedback for the student",
+    "total": "Total {points} / {max}",
+    "approve": "Approve and publish",
+    "reject": "Reject"
+  },
+  "results": {
+    "title": "My results",
+    "detail": "View details"
+  },
+  "toast": {
+    "region": "Notifications",
+    "close": "Dismiss notification",
+    "more": "Show more",
+    "less": "Show less",
+    "queued": "+{count} queued"
+  },
+  "upload": {
+    "open": "Upload work",
+    "title": "Upload work",
+    "pick": "Choose photos, scans or PDFs",
+    "formats": "You can select several files at once.",
+    "student": "Student",
+    "submit": "Upload and start grading",
+    "uploading": "Uploading {n} file… | Uploading {n} files…",
+    "uploaded": "{n} file uploaded, grading started | {n} files uploaded, grading started"
+  },
+  "appeal": {
+    "prompt": "Disagree with the grade?",
+    "open": "File an appeal",
+    "reason": "Reason for the appeal",
+    "cancel": "Cancel",
+    "submit": "Send appeal",
+    "sending": "Sending appeal…",
+    "sent": "Your appeal was sent to the teacher",
+    "pending": "Appeal awaiting resolution"
   }
 }

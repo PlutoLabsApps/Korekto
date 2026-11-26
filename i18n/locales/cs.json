@@ -86,5 +86,72 @@
     "title": "Přehled",
     "greeting": "Dobrý den, {name}.",
     "role": "Vaše role: {role}"
+  },
+  "preview": {
+    "banner": "Prototyp – smyšlená data, nic se neukládá.",
+    "title": "Prototyp",
+    "teacherFlow": "Třídy, zadání a kontrola AI hodnocení.",
+    "studentFlow": "Zveřejněné výsledky a zpětná vazba.",
+    "open": "Otevřít"
+  },
+  "classes": {
+    "title": "Moje třídy",
+    "students": "Žáci",
+    "studentCount": "{n} žák | {n} žáci | {n} žáků",
+    "assignmentCount": "{n} zadání | {n} zadání | {n} zadání"
+  },
+  "assignments": {
+    "title": "Zadání",
+    "due": "Termín {date}"
+  },
+  "submissions": {
+    "open": "Otevřít",
+    "status": {
+      "processing": "Zpracovává se",
+      "needsReview": "Ke kontrole",
+      "published": "Zveřejněno"
+    }
+  },
+  "review": {
+    "recognizedText": "Rozpoznaný text",
+    "scanPlaceholder": "Náhled skenu",
+    "aiSuggestion": "Návrh AI",
+    "points": "Body",
+    "uncertain": "AI si není jistá",
+    "feedback": "Zpětná vazba pro žáka",
+    "total": "Celkem {points} / {max}",
+    "approve": "Schválit a zveřejnit",
+    "reject": "Zamítnout"
+  },
+  "results": {
+    "title": "Moje výsledky",
+    "detail": "Detail hodnocení"
+  },
+  "toast": {
+    "region": "Oznámení",
+    "close": "Zavřít oznámení",
+    "more": "Zobrazit více",
+    "less": "Zobrazit méně",
+    "queued": "+{count} v pořadí"
+  },
+  "upload": {
+    "open": "Nahrát práce",
+    "title": "Nahrání prací",
+    "pick": "Vyberte fotografie, skeny nebo PDF",
+    "formats": "Můžete vybrat více souborů najednou.",
+    "student": "Žák",
+    "submit": "Nahrát a spustit hodnocení",
+    "uploading": "Nahrávám {n} práci… | Nahrávám {n} práce… | Nahrávám {n} prací…",
+    "uploaded": "Nahrána {n} práce, hodnocení běží | Nahrány {n} práce, hodnocení běží | Nahráno {n} prací, hodnocení běží"
+  },
+  "appeal": {
+    "prompt": "Nesouhlasíte s hodnocením?",
+    "open": "Podat námitku",
+    "reason": "Zdůvodnění námitky",
+    "cancel": "Zrušit",
+    "submit": "Odeslat námitku",
+    "sending": "Odesílám námitku…",
+    "sent": "Námitka byla odeslána učiteli",
+    "pending": "Námitka čeká na vyřízení"
   }
 }
