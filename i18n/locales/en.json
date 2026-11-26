@@ -87,6 +87,45 @@
     "greeting": "Hello, {name}.",
     "role": "Your role: {role}"
   },
+  "preview": {
+    "banner": "Prototype – fake data, nothing is saved.",
+    "title": "Prototype",
+    "teacherFlow": "Classes, assignments and reviewing AI grading.",
+    "studentFlow": "Published results and feedback.",
+    "open": "Open"
+  },
+  "classes": {
+    "title": "My classes",
+    "students": "Students",
+    "studentCount": "{n} student | {n} students",
+    "assignmentCount": "{n} assignment | {n} assignments"
+  },
+  "assignments": {
+    "title": "Assignments",
+    "due": "Due {date}"
+  },
+  "submissions": {
+    "open": "Open",
+    "status": {
+      "processing": "Processing",
+      "needsReview": "Needs review",
+      "published": "Published"
+    }
+  },
+  "review": {
+    "recognizedText": "Recognized text",
+    "scanPlaceholder": "Scan preview",
+    "aiSuggestion": "AI suggestion",
+    "points": "Points",
+    "uncertain": "AI is unsure",
+    "feedback": "Feedback for the student",
+    "total": "Total {points} / {max}",
+    "approve": "Approve and publish",
+    "reject": "Reject"
+  },
+  "results": {
+    "title": "My results"
+  },
   "toast": {
     "region": "Notifications",
     "close": "Dismiss notification",

@@ -11,6 +11,14 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-auth-utils',
     '@nuxtjs/i18n',
+    // The design gallery and clickable prototype exist only in development.
+    (_options, nuxt) => {
+      if (nuxt.options.dev) return
+      nuxt.hook('pages:extend', (pages) => {
+        const devOnly = (path: string) => path === '/design' || path.startsWith('/preview')
+        pages.splice(0, pages.length, ...pages.filter((page) => !devOnly(page.path)))
+      })
+    },
   ],
   css: ['~/assets/css/main.css'],
   i18n: {

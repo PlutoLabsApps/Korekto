@@ -87,6 +87,45 @@
     "greeting": "Dobrý den, {name}.",
     "role": "Vaše role: {role}"
   },
+  "preview": {
+    "banner": "Prototyp – smyšlená data, nic se neukládá.",
+    "title": "Prototyp",
+    "teacherFlow": "Třídy, zadání a kontrola AI hodnocení.",
+    "studentFlow": "Zveřejněné výsledky a zpětná vazba.",
+    "open": "Otevřít"
+  },
+  "classes": {
+    "title": "Moje třídy",
+    "students": "Žáci",
+    "studentCount": "{n} žák | {n} žáci | {n} žáků",
+    "assignmentCount": "{n} zadání | {n} zadání | {n} zadání"
+  },
+  "assignments": {
+    "title": "Zadání",
+    "due": "Termín {date}"
+  },
+  "submissions": {
+    "open": "Otevřít",
+    "status": {
+      "processing": "Zpracovává se",
+      "needsReview": "Ke kontrole",
+      "published": "Zveřejněno"
+    }
+  },
+  "review": {
+    "recognizedText": "Rozpoznaný text",
+    "scanPlaceholder": "Náhled skenu",
+    "aiSuggestion": "Návrh AI",
+    "points": "Body",
+    "uncertain": "AI si není jistá",
+    "feedback": "Zpětná vazba pro žáka",
+    "total": "Celkem {points} / {max}",
+    "approve": "Schválit a zveřejnit",
+    "reject": "Zamítnout"
+  },
+  "results": {
+    "title": "Moje výsledky"
+  },
   "toast": {
     "region": "Oznámení",
     "close": "Zavřít oznámení",
